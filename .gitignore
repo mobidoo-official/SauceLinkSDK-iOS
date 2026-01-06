@@ -1,0 +1,26 @@
+# Source code - distributed via S3, not GitHub
+Sources/
+Tests/
+Example/
+
+# Build outputs
+build/
+output/
+.build/
+DerivedData/
+*.xcarchive
+
+# Xcode
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
+
+# CocoaPods
+Pods/
+*.podspec
+
+# Other
+.DS_Store
+*.zip
+.swiftpm/
