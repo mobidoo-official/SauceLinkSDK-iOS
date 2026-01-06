@@ -18,7 +18,6 @@ xcuserdata/
 
 # CocoaPods
 Pods/
-*.podspec
 
 # Other
 .DS_Store
