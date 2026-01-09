@@ -1,7 +1,6 @@
 # Source code - distributed via S3, not GitHub
 Sources/
 Tests/
-Example/
 
 # Build outputs
 build/
@@ -10,9 +9,9 @@ output/
 DerivedData/
 *.xcarchive
 
-# Xcode
-*.xcodeproj
-*.xcworkspace
+# Xcode (SDK project excluded, Example project included)
+/*.xcodeproj
+/*.xcworkspace
 xcuserdata/
 *.xcuserstate
 
@@ -23,3 +22,6 @@ Pods/
 .DS_Store
 *.zip
 .swiftpm/
+
+# Claude
+.claude/
