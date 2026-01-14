@@ -1,8 +1,3 @@
-# Source code - distributed via S3, not GitHub
-Sources/
-Tests/
-Example/
-
 # Build outputs
 build/
 output/
