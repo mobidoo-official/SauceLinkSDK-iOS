@@ -12,8 +12,8 @@ public struct OrderProductInfo: Encodable {
     /// 상품 가격
     public let price: String
 
-    /// 상품 할인가격
-    public let discount_price: String
+    /// 상품 할인가격 (선택)
+    public let discount_price: String?
 
     /// 상품 수량
     public let quantity: Int
@@ -23,13 +23,13 @@ public struct OrderProductInfo: Encodable {
     ///   - product_id: 상품 코드
     ///   - product_name: 상품명
     ///   - price: 상품 가격
-    ///   - discount_price: 상품 할인가격
+    ///   - discount_price: 상품 할인가격 (선택)
     ///   - quantity: 상품 수량
     public init(
         product_id: String,
         product_name: String,
         price: String,
-        discount_price: String,
+        discount_price: String? = nil,
         quantity: Int
     ) {
         self.product_id = product_id
@@ -62,7 +62,7 @@ public struct OrderProductInfo: Encodable {
         } else if let discountNumber = dict["discount_price"] as? NSNumber {
             self.discount_price = discountNumber.stringValue
         } else {
-            self.discount_price = self.price
+            self.discount_price = nil
         }
 
         if let qty = dict["quantity"] as? Int {
@@ -76,12 +76,15 @@ public struct OrderProductInfo: Encodable {
 
     /// OrderProductInfo를 Dictionary로 변환
     public func toDictionary() -> [String: Any] {
-        return [
+        var dict: [String: Any] = [
             "product_id": product_id,
             "product_name": product_name,
             "price": price,
-            "discount_price": discount_price,
             "quantity": quantity
         ]
+        if let discount_price = discount_price {
+            dict["discount_price"] = discount_price
+        }
+        return dict
     }
 }

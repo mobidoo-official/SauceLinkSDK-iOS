@@ -12,20 +12,20 @@ public struct ProductDetailInfo: Encodable {
     /// 상품 가격
     public let price: String
 
-    /// 상품 할인가격
-    public let discount_price: String
+    /// 상품 할인가격 (선택)
+    public let discount_price: String?
 
     /// ProductDetailInfo 초기화
     /// - Parameters:
     ///   - product_id: 상품 코드
     ///   - product_name: 상품명
     ///   - price: 상품 가격
-    ///   - discount_price: 상품 할인가격
+    ///   - discount_price: 상품 할인가격 (선택)
     public init(
         product_id: String,
         product_name: String,
         price: String,
-        discount_price: String
+        discount_price: String? = nil
     ) {
         self.product_id = product_id
         self.product_name = product_name
@@ -56,17 +56,20 @@ public struct ProductDetailInfo: Encodable {
         } else if let discountNumber = dict["discount_price"] as? NSNumber {
             self.discount_price = discountNumber.stringValue
         } else {
-            self.discount_price = self.price
+            self.discount_price = nil
         }
     }
 
     /// ProductDetailInfo를 Dictionary로 변환
     public func toDictionary() -> [String: Any] {
-        return [
+        var dict: [String: Any] = [
             "product_id": product_id,
             "product_name": product_name,
-            "price": price,
-            "discount_price": discount_price
+            "price": price
         ]
+        if let discount_price = discount_price {
+            dict["discount_price"] = discount_price
+        }
+        return dict
     }
 }

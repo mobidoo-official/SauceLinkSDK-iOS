@@ -42,8 +42,8 @@ struct TrackingData: Encodable {
     /// 주문 ID (ORDER_COMPLETE, ORDER_CANCEL에서만 사용)
     let order_id: String?
 
-    /// 상품 정보 배열 (딕셔너리 형태로 직접 전달)
-    let json: [[String: Any]]
+    /// 이벤트 payload (배열 또는 딕셔너리)
+    let json: Any
 
     // MARK: - Custom Encoding
 
@@ -90,6 +90,8 @@ private struct AnyCodable: Encodable {
 
         if let array = value as? [[String: Any]] {
             try container.encode(array.map { DictionaryWrapper($0) })
+        } else if let dict = value as? [String: Any] {
+            try container.encode(DictionaryWrapper(dict))
         } else {
             try container.encodeNil()
         }
@@ -117,6 +119,8 @@ private struct DictionaryWrapper: Encodable {
                 try container.encode(doubleValue, forKey: codingKey)
             } else if let boolValue = value as? Bool {
                 try container.encode(boolValue, forKey: codingKey)
+            } else if let arrayValue = value as? [[String: Any]] {
+                try container.encode(arrayValue.map { DictionaryWrapper($0) }, forKey: codingKey)
             }
         }
     }

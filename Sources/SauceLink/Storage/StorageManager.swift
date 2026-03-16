@@ -10,7 +10,6 @@ final class StorageManager {
         static let clickId = "com.saucelink.tracker.clickId"
         static let sLink = "com.saucelink.tracker.sLink"
         static let sLinkEndDate = "com.saucelink.tracker.sLinkEndDate"
-        static let sLinkT = "com.saucelink.tracker.sLinkT"
         static let firstAccess = "com.saucelink.tracker.firstAccess"
     }
     
@@ -25,8 +24,6 @@ final class StorageManager {
     private var memoryClickId: String?
     private var memorySLink: String?
     private var memorySLinkEndDate: TimeInterval?
-    private var memorySLinkT: TimeInterval?
-    
     // MARK: - Initialization
     
     init(userDefaults: UserDefaults = .standard) {
@@ -111,46 +108,18 @@ final class StorageManager {
         return nil
     }
     
-    /// sLinkT 조회
-    /// - Returns: 이벤트 기여기간 (timestamp)
-    func getSLinkT() -> TimeInterval? {
-        // 메모리 캐시 확인
-        if let cached = memorySLinkT {
-            return cached
-        }
-        
-        // UserDefaults에서 조회
-        let stored = userDefaults.double(forKey: Keys.sLinkT)
-        if stored > 0 {
-            memorySLinkT = stored
-            return stored
-        }
-        
-        return nil
-    }
-    
     /// sLink 저장
     /// endDate는 현재 시간 + 7일로 자동 설정
-    /// - Parameters:
-    ///   - sLink: 저장할 sLink 값
-    ///   - sLinkT: 이벤트 기여기간 (선택)
-    func saveSLink(_ sLink: String, sLinkT: TimeInterval? = nil) {
+    /// - Parameter sLink: 저장할 sLink 값
+    func saveSLink(_ sLink: String) {
         let endDate = Date().timeIntervalSince1970 + sLinkExpirationDays
-        
-        // 메모리 캐시 업데이트
+
         memorySLink = sLink
         memorySLinkEndDate = endDate
-        memorySLinkT = sLinkT
-        
-        // UserDefaults에 저장
+
         do {
             userDefaults.set(sLink, forKey: Keys.sLink)
             userDefaults.set(endDate, forKey: Keys.sLinkEndDate)
-            
-            if let sLinkT = sLinkT {
-                userDefaults.set(sLinkT, forKey: Keys.sLinkT)
-            }
-            
             Logger.info("sLink saved: \(sLink), endDate: \(Date(timeIntervalSince1970: endDate))")
         } catch {
             Logger.error("Failed to save sLink: \(error.localizedDescription)")
@@ -175,16 +144,12 @@ final class StorageManager {
     
     /// sLink 삭제
     func clearSLink() {
-        // 메모리 캐시 클리어
         memorySLink = nil
         memorySLinkEndDate = nil
-        memorySLinkT = nil
-        
-        // UserDefaults에서 삭제
+
         userDefaults.removeObject(forKey: Keys.sLink)
         userDefaults.removeObject(forKey: Keys.sLinkEndDate)
-        userDefaults.removeObject(forKey: Keys.sLinkT)
-        
+
         Logger.info("sLink cleared")
     }
     
@@ -208,14 +173,12 @@ final class StorageManager {
         memoryClickId = nil
         memorySLink = nil
         memorySLinkEndDate = nil
-        memorySLinkT = nil
-        
+
         userDefaults.removeObject(forKey: Keys.clickId)
         userDefaults.removeObject(forKey: Keys.sLink)
         userDefaults.removeObject(forKey: Keys.sLinkEndDate)
-        userDefaults.removeObject(forKey: Keys.sLinkT)
         userDefaults.removeObject(forKey: Keys.firstAccess)
-        
+
         Logger.info("All storage cleared")
     }
 }
