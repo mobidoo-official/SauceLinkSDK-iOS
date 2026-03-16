@@ -125,12 +125,10 @@ class WebViewController: UIViewController {
 
         // slink, sLinkT 추출
         let slink = components?.queryItems?.first(where: { $0.name == "slink" || $0.name == "sLink" })?.value
-        let slinkT = components?.queryItems?.first(where: { $0.name == "sLinkT" })?.value
 
         print(String(repeating: "-", count: 60))
         print("🔍 추출된 트래킹 값:")
         print("   slink: \(slink ?? "nil")")
-        print("   sLinkT: \(slinkT ?? "nil")")
         print(String(repeating: "=", count: 60) + "\n")
 
         let request = URLRequest(url: url)

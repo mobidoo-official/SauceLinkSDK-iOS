@@ -30,7 +30,6 @@ class ConfigManager {
         static let productPrice = "test.productPrice"
         static let productDiscountPrice = "test.productDiscountPrice"
         static let slink = "test.slink"
-        static let slinkT = "test.slinkT"
         static let userId = "test.userId"
         static let environment = "test.environment"
     }
@@ -77,11 +76,6 @@ class ConfigManager {
         set { userDefaults.set(newValue, forKey: Keys.slink) }
     }
     
-    var slinkT: String {
-        get { userDefaults.string(forKey: Keys.slinkT) ?? "" }
-        set { userDefaults.set(newValue, forKey: Keys.slinkT) }
-    }
-    
     var userId: String {
         get { userDefaults.string(forKey: Keys.userId) ?? "" }
         set { userDefaults.set(newValue, forKey: Keys.userId) }
@@ -122,8 +116,7 @@ class ConfigManager {
         productName: String,
         productPrice: String,
         productDiscountPrice: String,
-        slink: String,
-        slinkT: String
+        slink: String
     ) {
         self.partnerUniqueId = partnerUniqueId
         self.token = token
@@ -133,7 +126,6 @@ class ConfigManager {
         self.productPrice = productPrice
         self.productDiscountPrice = productDiscountPrice
         self.slink = slink
-        self.slinkT = slinkT
     }
     
     /// 설정 초기화 여부
@@ -151,7 +143,6 @@ class ConfigManager {
         userDefaults.removeObject(forKey: Keys.productPrice)
         userDefaults.removeObject(forKey: Keys.productDiscountPrice)
         userDefaults.removeObject(forKey: Keys.slink)
-        userDefaults.removeObject(forKey: Keys.slinkT)
         userDefaults.removeObject(forKey: Keys.userId)
         userDefaults.removeObject(forKey: Keys.environment)
     }

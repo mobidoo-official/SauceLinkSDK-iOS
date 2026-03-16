@@ -76,13 +76,6 @@ class SettingsViewController: UIViewController {
         return tf
     }()
     
-    private lazy var slinkTTextField: UITextField = {
-        let tf = createTextField(placeholder: "sLinkT 타임스탬프 (선택)")
-        tf.keyboardType = .numberPad
-        tf.text = ConfigManager.shared.slinkT
-        return tf
-    }()
-    
     private lazy var environmentSegmentedControl: UISegmentedControl = {
         let items = ["Stage", "Prod"]
         let sc = UISegmentedControl(items: items)
@@ -172,8 +165,7 @@ class SettingsViewController: UIViewController {
         ])
         
         addSection(title: "소스링크 설정 (선택)", fields: [
-            ("sLink", slinkTextField),
-            ("sLinkT", slinkTTextField)
+            ("sLink", slinkTextField)
         ])
         
         stackView.addArrangedSubview(saveButton)
@@ -291,8 +283,7 @@ class SettingsViewController: UIViewController {
             productName: productNameTextField.text ?? "",
             productPrice: productPriceTextField.text ?? "",
             productDiscountPrice: productDiscountPriceTextField.text ?? "",
-            slink: slinkTextField.text ?? "",
-            slinkT: slinkTTextField.text ?? ""
+            slink: slinkTextField.text ?? ""
         )
         
         print("✅ UserDefaults에 저장 완료")
@@ -336,7 +327,6 @@ class SettingsViewController: UIViewController {
             self?.productPriceTextField.text = ""
             self?.productDiscountPriceTextField.text = ""
             self?.slinkTextField.text = ""
-            self?.slinkTTextField.text = ""
             self?.environmentSegmentedControl.selectedSegmentIndex = 0 // Stage로 초기화
             self?.showAlert(title: "삭제 완료", message: "모든 설정이 삭제되었습니다.")
         })
@@ -396,8 +386,6 @@ extension SettingsViewController: UITextFieldDelegate {
             productDiscountPriceTextField.becomeFirstResponder()
         } else if textField == productDiscountPriceTextField {
             slinkTextField.becomeFirstResponder()
-        } else if textField == slinkTextField {
-            slinkTTextField.becomeFirstResponder()
         } else {
             textField.resignFirstResponder()
         }

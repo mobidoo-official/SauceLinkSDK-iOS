@@ -56,10 +56,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 // 저장된 sLink가 있으면 적용
                 let savedSlink = configManager.slink
-                let savedSlinkT = configManager.slinkT
                 if !savedSlink.isEmpty {
                     print("📦 로컬 저장된 sLink 적용: \(savedSlink)")
-                    SauceLink.shared.updateSlink(savedSlink, savedSlinkT.isEmpty ? nil : savedSlinkT)
+                    SauceLink.shared.updateSlink(savedSlink)
                 }
                 
                 // 메인 스레드에서 상태 저장 및 notification 발송
@@ -134,16 +133,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         let slink = components?.queryItems?.first(where: { $0.name == "sLink" || $0.name == "slink" })?.value
-        let slinkT = components?.queryItems?.first(where: { $0.name == "sLinkT" })?.value
-        
+
         print("✅ 파싱된 값:")
         print("   sLink: \(slink ?? "nil")")
-        print("   sLinkT: \(slinkT ?? "nil")")
         print(String(repeating: "=", count: 60) + "\n")
-        
-        // Android 가이드 스타일의 updateSlink 메서드 사용
+
         print("📤 [AppDelegate] SDK.updateSlink() 호출")
-        SauceLink.shared.updateSlink(slink, slinkT)
+        SauceLink.shared.updateSlink(slink)
         return true
     }
 }

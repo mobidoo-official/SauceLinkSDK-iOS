@@ -90,14 +90,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         // 네이티브용 sLink 파라미터
         let slinkValue = components?.queryItems?.first(where: { $0.name == "sLink" || $0.name == "slink" })?.value
-        let slinkT = components?.queryItems?.first(where: { $0.name == "sLinkT" })?.value
         let productId = components?.queryItems?.first(where: { $0.name == "productId" })?.value
 
         print(String(repeating: "-", count: 60))
         print("✅ 파싱된 값:")
         print("   url (웹뷰용): \(webUrl ?? "nil")")
         print("   sLink (네이티브용): \(slinkValue ?? "nil")")
-        print("   sLinkT: \(slinkT ?? "nil")")
         print("   productId: \(productId ?? "nil")")
         print(String(repeating: "=", count: 60) + "\n")
         
@@ -135,8 +133,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         case "native":
             // 네이티브 앱 열기: sLink로 updateSlink 호출
-            print("📤 SDK.updateSlink() 호출: sLink=\(slinkValue ?? "nil"), sLinkT=\(slinkT ?? "nil")")
-            SauceLink.shared.updateSlink(slinkValue, slinkT)
+            print("📤 SDK.updateSlink() 호출: sLink=\(slinkValue ?? "nil")")
+            SauceLink.shared.updateSlink(slinkValue)
 
             if let productId = productId {
                 print("📱 네이티브 모드: sLink=\(slinkValue ?? ""), productId=\(productId)")

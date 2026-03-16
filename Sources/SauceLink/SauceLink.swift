@@ -115,11 +115,9 @@ public final class SauceLink {
     /// 소스링크 트래킹 링크 업데이트 (Android 가이드 호환)
     /// - Parameters:
     ///   - slink: 앱스킴을 통해 전달된 slink 값
-    ///   - slinkT: 앱스킴을 통해 전달된 slink의 타임스탬프 값
-    public func updateSlink(_ slink: String?, _ slinkT: String?) {
+    public func updateSlink(_ slink: String?) {
         Logger.info("📥 [SDK] updateSlink() 호출됨")
         Logger.info("   입력 sLink: \(slink ?? "nil")")
-        Logger.info("   입력 sLinkT: \(slinkT ?? "nil")")
         
         serialQueue.async { [weak self] in
             guard let self = self else { return }
@@ -131,56 +129,20 @@ public final class SauceLink {
             
             Logger.info("✅ [SDK] sLink 값 확인: '\(slink)'")
             
-            do {
-                // sLinkT를 TimeInterval로 변환
-                var timeInterval: TimeInterval? = nil
-                if let slinkTStr = slinkT, let timestamp = TimeInterval(slinkTStr) {
-                    timeInterval = timestamp
-                    Logger.info("📅 [SDK] sLinkT 변환 성공: \(timestamp) (날짜: \(Date(timeIntervalSince1970: timestamp)))")
-                } else if slinkT != nil {
-                    Logger.warning("⚠️ [SDK] sLinkT 변환 실패: '\(slinkT!)' (유효하지 않은 타임스탬프)")
-                } else {
-                    Logger.info("ℹ️ [SDK] sLinkT 없음 (선택사항)")
-                }
-                
-                // 초기화 전이면 저장만 하고 리턴
-                guard self.isInitialized, self.isTokenValid else {
-                    Logger.info("⏳ [SDK] SDK 초기화 대기 중... sLink 임시 저장")
-                    Logger.info("   저장할 sLink: '\(slink)'")
-                    if let sLinkT = timeInterval {
-                        Logger.info("   저장할 sLinkT: \(sLinkT)")
-                    }
-                    // 나중에 처리하기 위해 임시 저장
-                    self.storageManager.saveSLink(slink, sLinkT: timeInterval)
-                    Logger.info("✅ [SDK] sLink 임시 저장 완료 (초기화 후 처리 예정)")
-                    return
-                }
-                
-                Logger.info("✅ [SDK] SDK 초기화 완료됨, sLink 처리 시작")
-                
-                // sLinkT 유효성 검사 (기여기간 확인)
-                if let sLinkT = timeInterval {
-                    let currentTime = Date().timeIntervalSince1970
-                    Logger.info("⏰ [SDK] sLinkT 유효성 검사:")
-                    Logger.info("   sLinkT: \(sLinkT) (날짜: \(Date(timeIntervalSince1970: sLinkT)))")
-                    Logger.info("   현재 시간: \(currentTime) (날짜: \(Date(timeIntervalSince1970: currentTime)))")
-                    
-                    // sLinkT가 현재 시간보다 이전이면 기여기간 만료
-                    if sLinkT < currentTime {
-                        Logger.warning("❌ [SDK] sLinkT 만료됨 (과거 시간), sLink 제거")
-                        self.storageManager.clearSLink()
-                        return
-                    } else {
-                        Logger.info("✅ [SDK] sLinkT 유효함 (미래 시간)")
-                    }
-                }
-                
-                // sLink 저장 로직
-                Logger.info("💾 [SDK] sLink 저장 로직 실행: '\(slink)'")
-                self.processSLink(newSLink: slink, sLinkT: timeInterval)
-            } catch {
-                Logger.error("❌ [SDK] UpdateSlink 실패: \(error.localizedDescription)")
+            // 초기화 전이면 저장만 하고 리턴
+            guard self.isInitialized, self.isTokenValid else {
+                Logger.info("⏳ [SDK] SDK 초기화 대기 중... sLink 임시 저장")
+                Logger.info("   저장할 sLink: '\(slink)'")
+                self.storageManager.saveSLink(slink)
+                Logger.info("✅ [SDK] sLink 임시 저장 완료 (초기화 후 처리 예정)")
+                return
             }
+            
+            Logger.info("✅ [SDK] SDK 초기화 완료됨, sLink 처리 시작")
+            
+            // sLink 저장 로직
+            Logger.info("💾 [SDK] sLink 저장 로직 실행: '\(slink)'")
+            self.processSLink(newSLink: slink)
         }
     }
     
@@ -209,7 +171,7 @@ public final class SauceLink {
         let properties: [String: Any] = [
             "products": [product.toDictionary()]
         ]
-
+        
         sendEvent("PRODUCT_DETAIL", properties: properties) { success, statusCode in
             if success {
                 completion?(.success(()))
@@ -238,7 +200,7 @@ public final class SauceLink {
             "order_id": orderId,
             "products": products.map { $0.toDictionary() }
         ]
-
+        
         sendEvent("ORDER_COMPLETE", properties: properties) { success, statusCode in
             if success {
                 completion?(.success(()))
@@ -252,7 +214,7 @@ public final class SauceLink {
             }
         }
     }
-
+    
     /// 주문 취소 이벤트 (Android 가이드 호환)
     /// - Parameters:
     ///   - orderId: 주문번호
@@ -267,7 +229,7 @@ public final class SauceLink {
             "order_id": orderId,
             "products": products.map { $0.toDictionary() }
         ]
-
+        
         sendEvent("ORDER_CANCEL", properties: properties) { success, statusCode in
             if success {
                 completion?(.success(()))
@@ -293,7 +255,7 @@ public final class SauceLink {
         let properties: [String: Any] = [
             "product_list": products.map { $0.toDictionary() }
         ]
-
+        
         sendEvent("ADD_TO_CART", properties: properties) { success, statusCode in
             if success {
                 completion?(.success(()))
@@ -307,7 +269,7 @@ public final class SauceLink {
             }
         }
     }
-
+    
     /// 회원가입 이벤트
     /// - Parameter completion: 트래킹 API 성공 여부 체크를 위한 콜백
     public func trackSignUp(
@@ -326,7 +288,7 @@ public final class SauceLink {
             }
         }
     }
-
+    
     /// 사용자 정보 설정
     /// - Parameter userData: 사용자 정보 객체
     public func setUserData(_ userData: UserData) {
@@ -428,30 +390,15 @@ public final class SauceLink {
             return
         }
         
-        // sLinkT 유효성 검사 (기여기간 확인)
-        if let sLinkT = deepLinkData.sLinkT {
-            let currentTime = Date().timeIntervalSince1970
-            
-            // sLinkT가 현재 시간보다 이전이면 기여기간 만료
-            if sLinkT < currentTime {
-                Logger.info("sLinkT expired, removing sLink")
-                storageManager.clearSLink()
-                return
-            }
-        }
-        
         // sLink 저장 로직
-        processSLink(newSLink: sLink, sLinkT: deepLinkData.sLinkT)
+        processSLink(newSLink: sLink)
     }
     
-    private func processSLink(newSLink: String, sLinkT: TimeInterval?) {
+    private func processSLink(newSLink: String) {
         let currentTime = Date().timeIntervalSince1970
         
         Logger.info("🔄 [SDK] processSLink() 실행")
         Logger.info("   새 sLink: '\(newSLink)'")
-        if let sLinkT = sLinkT {
-            Logger.info("   새 sLinkT: \(sLinkT)")
-        }
         
         // 기존 sLink 정보 가져오기
         let existingSLink = storageManager.getSLink()
@@ -467,17 +414,15 @@ public final class SauceLink {
         }
         
         if let existingEndDate = existingEndDate {
-            // endDate가 지났는지 확인
             if currentTime > existingEndDate {
                 // 기존 sLink 만료됨 - 새로 저장
                 Logger.info("⏰ [SDK] 기존 sLink 만료됨 (endDate 지남), 새 sLink 저장")
-                storageManager.saveSLink(newSLink, sLinkT: sLinkT)
+                storageManager.saveSLink(newSLink)
                 Logger.info("✅ [SDK] 새 sLink 저장 완료: '\(newSLink)'")
             } else if existingSLink != newSLink {
-                // 다른 sLink - 기존 것 삭제하고 새로 저장
+                // 다른 sLink - 새로 저장
                 Logger.info("🔄 [SDK] 다른 sLink 수신됨 (기존: '\(existingSLink ?? "nil")', 새: '\(newSLink)')")
-                Logger.info("   기존 sLink 삭제 후 새 sLink 저장")
-                storageManager.saveSLink(newSLink, sLinkT: sLinkT)
+                storageManager.saveSLink(newSLink)
                 Logger.info("✅ [SDK] 새 sLink 저장 완료: '\(newSLink)'")
             } else {
                 // 같은 sLink - endDate만 갱신
@@ -488,112 +433,124 @@ public final class SauceLink {
         } else {
             // 기존 sLink 없음 - 새로 저장
             Logger.info("📝 [SDK] 기존 sLink 없음, 새 sLink 저장")
-            storageManager.saveSLink(newSLink, sLinkT: sLinkT)
+            storageManager.saveSLink(newSLink)
             Logger.info("✅ [SDK] 새 sLink 저장 완료: '\(newSLink)'")
+            
+            // 최종 저장된 sLink 확인
+            let savedSLink = storageManager.getSLink()
+            Logger.info("💾 [SDK] 최종 저장된 sLink: '\(savedSLink ?? "nil")'")
         }
-        
-        // 최종 저장된 sLink 확인
-        let savedSLink = storageManager.getSLink()
-        Logger.info("💾 [SDK] 최종 저장된 sLink: '\(savedSLink ?? "nil")'")
     }
-    
+
     private func internalSetUserData(_ userData: UserData) throws {
-        // 기존 userData와 병합
-        if let existing = self.userData {
-            self.userData = existing.merged(with: userData)
-        } else {
-            self.userData = userData
+            // 기존 userData와 병합
+            if let existing = self.userData {
+                self.userData = existing.merged(with: userData)
+            } else {
+                self.userData = userData
+            }
+            
+            Logger.info("UserData updated: \(String(describing: self.userData?.userId))")
         }
         
-        Logger.info("UserData updated: \(String(describing: self.userData?.userId))")
-    }
-    
-    private func internalSendEvent(_ eventName: String, properties: [String: Any]?, completion: ((Bool, Int?) -> Void)?) throws {
-        // SDK 초기화 및 토큰 유효성 확인
-        guard isInitialized, isTokenValid else {
-            Logger.warning("SDK not initialized or token invalid, event ignored")
-            DispatchQueue.main.async { completion?(false, nil) }
-            return
-        }
-        
-        guard let config = self.config else {
-            Logger.warning("Config not set, event ignored")
-            DispatchQueue.main.async { completion?(false, nil) }
-            return
-        }
-        
-        // sLink 필수 체크
-        guard let sLink = storageManager.getSLink(), !sLink.isEmpty else {
-            Logger.warning("No sLink available, event ignored. Please call updateSlink() first.")
-            DispatchQueue.main.async { completion?(false, nil) }
-            return
-        }
-        
-        // 트래킹 데이터 구성
-        let trackingData = buildTrackingData(
-            eventName: eventName,
-            properties: properties,
-            config: config
-        )
-        
-        // 서버로 전송
-        networkManager.sendTrackingData(trackingData, environment: config.environment) { result in
-            switch result {
-            case .success:
-                Logger.info("Event sent successfully: \(eventName)")
-                DispatchQueue.main.async { completion?(true, 200) }
-            case .failure(let error):
-                Logger.error("Event send failed: \(error.localizedDescription)")
-                var statusCode: Int? = nil
-                if case .httpError(let code, _, _) = error {
-                    statusCode = code
+        private func internalSendEvent(_ eventName: String, properties: [String: Any]?, completion: ((Bool, Int?) -> Void)?) throws {
+            // SDK 초기화 및 토큰 유효성 확인
+            guard isInitialized, isTokenValid else {
+                Logger.warning("SDK not initialized or token invalid, event ignored")
+                DispatchQueue.main.async { completion?(false, nil) }
+                return
+            }
+            
+            guard let config = self.config else {
+                Logger.warning("Config not set, event ignored")
+                DispatchQueue.main.async { completion?(false, nil) }
+                return
+            }
+            
+            // sLink 필수 체크
+            guard let sLink = storageManager.getSLink(), !sLink.isEmpty else {
+                Logger.warning("No sLink available, event ignored. Please call updateSlink() first.")
+                DispatchQueue.main.async { completion?(false, nil) }
+                return
+            }
+            
+            // 트래킹 데이터 구성
+            let trackingData = buildTrackingData(
+                eventName: eventName,
+                properties: properties,
+                config: config
+            )
+            
+            // 서버로 전송
+            networkManager.sendTrackingData(trackingData, environment: config.environment) { result in
+                switch result {
+                case .success:
+                    Logger.info("Event sent successfully: \(eventName)")
+                    DispatchQueue.main.async { completion?(true, 200) }
+                case .failure(let error):
+                    Logger.error("Event send failed: \(error.localizedDescription)")
+                    var statusCode: Int? = nil
+                    if case .httpError(let code, _, _) = error {
+                        statusCode = code
+                    }
+                    DispatchQueue.main.async { completion?(false, statusCode) }
                 }
-                DispatchQueue.main.async { completion?(false, statusCode) }
             }
         }
-    }
-    
-    private func buildTrackingData(
-        eventName: String,
-        properties: [String: Any]?,
-        config: TrackerConfig
-    ) -> TrackingData {
-        let clickId = storageManager.getOrCreateClickId()
-        let sLink = storageManager.getSLink()
-        let isFirstAccess = storageManager.isFirstAccess()
+        
+        private func buildTrackingData(
+            eventName: String,
+            properties: [String: Any]?,
+            config: TrackerConfig
+        ) -> TrackingData {
+            let clickId = storageManager.getOrCreateClickId()
+            let sLink = storageManager.getSLink()
+            let isFirstAccess = storageManager.isFirstAccess()
+            
+            // first_access 플래그 업데이트
+            if isFirstAccess {
+                storageManager.markFirstAccessComplete()
+            }
+            
+            // 이벤트별 json 페이로드 구성
+            let json: Any
+            switch eventName {
+            case "ADD_TO_CART":
+                let productList = properties?["product_list"] as? [[String: Any]] ?? []
+                json = ["product_list": productList]
+                Logger.info("📦 [SDK] ADD_TO_CART payload: product_list(\(productList.count)개) \(productList)")
+            case "SIGN_UP":
+                json = ["signup_completed": true]
+                Logger.info("📦 [SDK] SIGN_UP payload: {signup_completed: true}")
+            default:
+                let products = properties?["products"] as? [[String: Any]] ?? []
+                json = products
+                Logger.info("📦 [SDK] \(eventName) payload: products(\(products.count)개) \(products)")
+            }
 
-        // first_access 플래그 업데이트
-        if isFirstAccess {
-            storageManager.markFirstAccessComplete()
+            // order_id 파싱
+            let orderId = properties?["order_id"] as? String
+            
+            // ISO8601 날짜 포맷 (밀리세컨드 포함)
+            let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            let eventDate = dateFormatter.string(from: Date())
+            
+            return TrackingData(
+                partner_unique_id: config.partnerUniqueId,
+                sauce_link_code: sLink,
+                shop_host_name: "SAUCE",
+                platform: "APP",
+                user_agent: DeviceInfo.userAgent,
+                user_device: DeviceInfo.deviceModelName,
+                user_os: "iOS \(DeviceInfo.osVersion)",
+                click_id: clickId,
+                request_id: UUID().uuidString,
+                first_access: isFirstAccess,
+                event_date: eventDate,
+                event_name: eventName,
+                order_id: orderId,
+                json: json
+            )
         }
-
-        // products 딕셔너리 배열 직접 사용 (이미 올바른 형식)
-        let products = properties?["products"] as? [[String: Any]] ?? []
-
-        // order_id 파싱
-        let orderId = properties?["order_id"] as? String
-
-        // ISO8601 날짜 포맷 (밀리세컨드 포함)
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let eventDate = dateFormatter.string(from: Date())
-
-        return TrackingData(
-            partner_unique_id: config.partnerUniqueId,
-            sauce_link_code: sLink,
-            shop_host_name: "SAUCE",
-            platform: "APP",
-            user_agent: DeviceInfo.userAgent,
-            user_device: DeviceInfo.deviceModelName,
-            user_os: "iOS \(DeviceInfo.osVersion)",
-            click_id: clickId,
-            request_id: UUID().uuidString,
-            first_access: isFirstAccess,
-            event_date: eventDate,
-            event_name: eventName,
-            order_id: orderId,
-            json: products
-        )
-    }
 }
-

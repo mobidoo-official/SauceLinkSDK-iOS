@@ -735,11 +735,9 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
     @objc private func testDeepLinkTapped() {
         // 테스트용 딥링크 시뮬레이션 (네이티브 모드)
         let slink = "test123abc"
-        let slinkT = "\(Int(Date().timeIntervalSince1970) + 86400)"
-        
-        // Android 가이드 스타일: updateSlink 사용
-        SauceLink.shared.updateSlink(slink, slinkT)
-        appendLog("DeepLink simulated: slink=\(slink), sLinkT=\(slinkT)")
+
+        SauceLink.shared.updateSlink(slink)
+        appendLog("DeepLink simulated: slink=\(slink)")
     }
     
     // MARK: - Deep Link Product Detail
