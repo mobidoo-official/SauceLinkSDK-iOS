@@ -282,6 +282,51 @@ public final class SauceLink {
         }
     }
     
+    /// 장바구니 담기 이벤트
+    /// - Parameters:
+    ///   - products: 장바구니 상품 정보 리스트
+    ///   - completion: 트래킹 API 성공 여부 체크를 위한 콜백
+    public func trackAddToCart(
+        products: [OrderProductInfo],
+        completion: ((Result<Void, Error>) -> Void)? = nil
+    ) {
+        let properties: [String: Any] = [
+            "product_list": products.map { $0.toDictionary() }
+        ]
+
+        sendEvent("ADD_TO_CART", properties: properties) { success, statusCode in
+            if success {
+                completion?(.success(()))
+            } else {
+                let error = NSError(
+                    domain: "SauceLink",
+                    code: statusCode ?? -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Track event failed with status code: \(statusCode ?? -1)"]
+                )
+                completion?(.failure(error))
+            }
+        }
+    }
+
+    /// 회원가입 이벤트
+    /// - Parameter completion: 트래킹 API 성공 여부 체크를 위한 콜백
+    public func trackSignUp(
+        completion: ((Result<Void, Error>) -> Void)? = nil
+    ) {
+        sendEvent("SIGN_UP") { success, statusCode in
+            if success {
+                completion?(.success(()))
+            } else {
+                let error = NSError(
+                    domain: "SauceLink",
+                    code: statusCode ?? -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Track event failed with status code: \(statusCode ?? -1)"]
+                )
+                completion?(.failure(error))
+            }
+        }
+    }
+
     /// 사용자 정보 설정
     /// - Parameter userData: 사용자 정보 객체
     public func setUserData(_ userData: UserData) {

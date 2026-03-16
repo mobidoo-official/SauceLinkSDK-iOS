@@ -163,6 +163,12 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
         btn.addTarget(self, action: #selector(trackOrderCancelTapped), for: .touchUpInside)
         return btn
     }()
+
+    private lazy var signUpButton: UIButton = {
+        let btn = createButton(title: "👤 회원가입 이벤트", color: .systemTeal)
+        btn.addTarget(self, action: #selector(trackSignUpTapped), for: .touchUpInside)
+        return btn
+    }()
     
     private lazy var testDeepLinkButton: UIButton = {
         let btn = createButton(title: "🔗 딥링크 테스트", color: .systemPurple)
@@ -389,14 +395,16 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
         eventLabel.text = "📊 이벤트 전송"
         eventLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         stackView.addArrangedSubview(eventLabel)
-        
+
+        stackView.addArrangedSubview(signUpButton)
+
         let infoLabel = UILabel()
         infoLabel.text = "ℹ️ 카트에 추가된 상품으로 이벤트를 전송합니다"
         infoLabel.font = .systemFont(ofSize: 12)
         infoLabel.textColor = .secondaryLabel
         infoLabel.numberOfLines = 0
         stackView.addArrangedSubview(infoLabel)
-        
+
         stackView.addArrangedSubview(productDetailButton)
         stackView.addArrangedSubview(orderCompleteButton)
         stackView.addArrangedSubview(orderCancelButton)
@@ -530,8 +538,9 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
         cart.append(product)
         updateCartUI()
         appendLog("✅ 상품A 카트에 추가됨")
+        trackAddToCartEvent(addedProduct: product)
     }
-    
+
     @objc private func addProductBTapped() {
         let product = CartProduct(
             productId: "prod-B",
@@ -543,6 +552,33 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
         cart.append(product)
         updateCartUI()
         appendLog("✅ 상품B 카트에 추가됨")
+        trackAddToCartEvent(addedProduct: product)
+    }
+
+    private func trackAddToCartEvent(addedProduct: CartProduct) {
+        let products = cart.map { product in
+            OrderProductInfo(
+                product_id: product.productId,
+                product_name: product.productName,
+                price: "\(product.price)",
+                discount_price: "\(product.discountPrice)",
+                quantity: product.quantity
+            )
+        }
+
+        appendLog("📤 ADD_TO_CART 이벤트 전송 중... (\(cart.count)개 상품)")
+        SauceLink.shared.trackAddToCart(products: products) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                self.updateLastEventStatus(eventName: "ADD_TO_CART", success: true, statusCode: 200)
+                self.appendLog("✅ ADD_TO_CART 전송 성공 (HTTP 200)")
+            case .failure(let error):
+                let statusCode = (error as NSError).code
+                self.updateLastEventStatus(eventName: "ADD_TO_CART", success: false, statusCode: statusCode)
+                self.appendLog("❌ ADD_TO_CART 전송 실패 (HTTP \(statusCode))")
+            }
+        }
     }
     
     @objc private func clearCartTapped() {
@@ -680,6 +716,22 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
     
+    @objc private func trackSignUpTapped() {
+        appendLog("📤 SIGN_UP 이벤트 전송 중...")
+        SauceLink.shared.trackSignUp { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                self.updateLastEventStatus(eventName: "SIGN_UP", success: true, statusCode: 200)
+                self.appendLog("✅ SIGN_UP 전송 성공 (HTTP 200)")
+            case .failure(let error):
+                let statusCode = (error as NSError).code
+                self.updateLastEventStatus(eventName: "SIGN_UP", success: false, statusCode: statusCode)
+                self.appendLog("❌ SIGN_UP 전송 실패 (HTTP \(statusCode))")
+            }
+        }
+    }
+
     @objc private func testDeepLinkTapped() {
         // 테스트용 딥링크 시뮬레이션 (네이티브 모드)
         let slink = "test123abc"

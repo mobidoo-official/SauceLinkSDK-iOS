@@ -13,14 +13,12 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'SauceLive' => 'dev@saucelive.net' }
 
-  # S3 기반 배포 URL
-  s.source           = { :http => 'https://sdk.saucelink.im/iOS/SauceLinkSDK-1.0.0.zip' }
+  s.source           = { :git => 'https://github.com/mobidoo-official/SauceLinkSDK-iOS.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '14.0'
   s.swift_version = '5.5'
 
-  # XCFramework 기반 배포
-  s.vendored_frameworks = 'SauceLinkSDK.xcframework'
+  s.source_files = 'Sources/SauceLink/**/*.swift'
 
   s.frameworks = 'Foundation', 'UIKit'
 end
