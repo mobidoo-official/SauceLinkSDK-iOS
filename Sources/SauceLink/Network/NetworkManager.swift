@@ -27,6 +27,11 @@ enum NetworkError: Error, LocalizedError {
 /// 토큰 인증 응답
 private struct TokenValidationResponse: Decodable {
     let code: String
+    let data: TokenValidationData?
+
+    struct TokenValidationData: Decodable {
+        let cookieExpiresAt: Int64?
+    }
 }
 
 /// 에러 응답
@@ -56,6 +61,7 @@ final class NetworkManager {
         self.encoder.outputFormatting = .sortedKeys
         
         self.decoder = JSONDecoder()
+        self.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
     
     // MARK: - Token Validation
@@ -70,7 +76,7 @@ final class NetworkManager {
         token: String,
         partnerUniqueId: String,
         environment: Environment,
-        completion: @escaping (Result<Void, NetworkError>) -> Void
+        completion: @escaping (Result<TimeInterval, NetworkError>) -> Void
     ) {
         let endpoint = APIEndpoints.tokenValidation(token: token, partnerUniqueId: partnerUniqueId)
         
@@ -110,11 +116,26 @@ final class NetworkManager {
             switch httpResponse.statusCode {
             case 200:
                 // 성공
-                if let data = data, let responseString = String(data: data, encoding: .utf8) {
-                    Logger.info("   응답 내용: \(responseString)")
+                var retentionInterval: TimeInterval = 7 * 24 * 60 * 60
+                if let data = data {
+                    if let responseString = String(data: data, encoding: .utf8) {
+                        Logger.info("   응답 내용: \(responseString)")
+                    }
+                    if let response = try? self?.decoder.decode(TokenValidationResponse.self, from: data) {
+                        if let cookieExpiresAt = response.data?.cookieExpiresAt {
+                            let expiresAtSeconds = TimeInterval(cookieExpiresAt) / 1000.0
+                            let retention = expiresAtSeconds - Date().timeIntervalSince1970
+                            if retention > 0 {
+                                retentionInterval = retention
+                                Logger.info("   cookieExpiresAt: \(cookieExpiresAt) → retentionInterval: \(Int(retention))s")
+                            }
+                        } else {
+                            Logger.warning("   cookieExpiresAt 필드 없음 → 기본값 7일 적용")
+                        }
+                    }
                 }
-                Logger.info("✅ 토큰 인증 성공")
-                completion(.success(()))
+                Logger.info("✅ 토큰 인증 성공 (retentionInterval: \(retentionInterval)s)")
+                completion(.success(retentionInterval))
                 
             case 401:
                 // 인증 실패
@@ -207,7 +228,7 @@ final class NetworkManager {
     private func handleErrorResponse(
         data: Data?,
         statusCode: Int,
-        completion: @escaping (Result<Void, NetworkError>) -> Void
+        completion: @escaping (Result<TimeInterval, NetworkError>) -> Void
     ) {
         var errorCode: String?
         var errorMessage: String?

@@ -23,6 +23,30 @@ public final class SauceLink {
     
     // MARK: - Public Methods
     
+    /// sLink 현재 상태 조회
+    public struct SLinkStatus {
+        public let savedAt: Date?
+        public let expiresAt: Date?
+        public let isExpired: Bool
+        public let retentionInterval: TimeInterval
+    }
+
+    public func getSLinkStatus() -> SLinkStatus {
+        var result: SLinkStatus = SLinkStatus(savedAt: nil, expiresAt: nil, isExpired: true, retentionInterval: 0)
+        serialQueue.sync {
+            let savedAt = self.storageManager.getSLinkSavedAt().map { Date(timeIntervalSince1970: $0) }
+            let expiresAt = self.storageManager.getSLinkEndDate().map { Date(timeIntervalSince1970: $0) }
+            let isExpired: Bool
+            if let endDate = self.storageManager.getSLinkEndDate() {
+                isExpired = Date().timeIntervalSince1970 > endDate
+            } else {
+                isExpired = true
+            }
+            result = SLinkStatus(savedAt: savedAt, expiresAt: expiresAt, isExpired: isExpired, retentionInterval: self.sLinkRetentionInterval)
+        }
+        return result
+    }
+
     /// SDK 현재 상태를 동기적으로 가져오기 (thread-safe)
     /// - Returns: (초기화 완료 여부, 토큰 유효 여부, 상태 코드)
     public func getAuthStatus() -> (isInitialized: Bool, isTokenValid: Bool, statusCode: Int) {
@@ -38,6 +62,7 @@ public final class SauceLink {
     private var config: TrackerConfig?
     private var userData: UserData?
     private var currentDeepLinkURL: String?
+    private var sLinkRetentionInterval: TimeInterval = 7 * 24 * 60 * 60
     
     private let storageManager = StorageManager()
     private let networkManager = NetworkManager()
@@ -133,7 +158,7 @@ public final class SauceLink {
             guard self.isInitialized, self.isTokenValid else {
                 Logger.info("⏳ [SDK] SDK 초기화 대기 중... sLink 임시 저장")
                 Logger.info("   저장할 sLink: '\(slink)'")
-                self.storageManager.saveSLink(slink)
+                self.storageManager.saveSLink(slink, retentionInterval: self.sLinkRetentionInterval)
                 Logger.info("✅ [SDK] sLink 임시 저장 완료 (초기화 후 처리 예정)")
                 return
             }
@@ -328,7 +353,10 @@ public final class SauceLink {
     
     private func internalInitialize(config: TrackerConfig, completion: ((Bool) -> Void)?) throws {
         self.config = config
-        
+
+        // 진입 시점 sLink 상태 출력
+        storageManager.logSLinkStatus()
+
         // clickId 확인 또는 생성 (영구 저장)
         _ = storageManager.getOrCreateClickId()
         
@@ -344,11 +372,12 @@ public final class SauceLink {
             }
             
             switch result {
-            case .success:
+            case .success(let retentionInterval):
                 self.serialQueue.async {
                     self.isTokenValid = true
                     self.isInitialized = true
                     self.lastAuthStatusCode = 200
+                    self.sLinkRetentionInterval = retentionInterval
                     Logger.info("SDK initialized successfully")
                     
                     // 초기화 후 대기 중인 딥링크 처리
@@ -417,23 +446,23 @@ public final class SauceLink {
             if currentTime > existingEndDate {
                 // 기존 sLink 만료됨 - 새로 저장
                 Logger.info("⏰ [SDK] 기존 sLink 만료됨 (endDate 지남), 새 sLink 저장")
-                storageManager.saveSLink(newSLink)
+                storageManager.saveSLink(newSLink, retentionInterval: sLinkRetentionInterval)
                 Logger.info("✅ [SDK] 새 sLink 저장 완료: '\(newSLink)'")
             } else if existingSLink != newSLink {
                 // 다른 sLink - 새로 저장
                 Logger.info("🔄 [SDK] 다른 sLink 수신됨 (기존: '\(existingSLink ?? "nil")', 새: '\(newSLink)')")
-                storageManager.saveSLink(newSLink)
+                storageManager.saveSLink(newSLink, retentionInterval: sLinkRetentionInterval)
                 Logger.info("✅ [SDK] 새 sLink 저장 완료: '\(newSLink)'")
             } else {
                 // 같은 sLink - endDate만 갱신
                 Logger.info("✅ [SDK] 동일한 sLink 수신됨 ('\(newSLink)'), endDate만 갱신")
-                storageManager.refreshSLinkEndDate()
+                storageManager.refreshSLinkEndDate(retentionInterval: sLinkRetentionInterval)
                 Logger.info("✅ [SDK] endDate 갱신 완료")
             }
         } else {
             // 기존 sLink 없음 - 새로 저장
             Logger.info("📝 [SDK] 기존 sLink 없음, 새 sLink 저장")
-            storageManager.saveSLink(newSLink)
+            storageManager.saveSLink(newSLink, retentionInterval: sLinkRetentionInterval)
             Logger.info("✅ [SDK] 새 sLink 저장 완료: '\(newSLink)'")
             
             // 최종 저장된 sLink 확인

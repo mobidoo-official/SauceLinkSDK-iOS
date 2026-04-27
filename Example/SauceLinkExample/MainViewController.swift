@@ -254,6 +254,7 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
             
             if success {
                 self.appendLog("✅ SDK 초기화 성공 (토큰 인증: HTTP \(statusCode))")
+                self.appendSLinkStatusLog()
             } else {
                 self.appendLog("❌ SDK 초기화 실패 (토큰 인증: HTTP \(statusCode))")
             }
@@ -309,6 +310,7 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
             
             if success {
                 self.appendLog("✅ SDK 초기화 완료 (토큰 인증: \(statusCode))")
+                self.appendSLinkStatusLog()
             } else {
                 self.appendLog("❌ SDK 초기화 실패 (토큰 인증: \(statusCode))")
             }
@@ -503,10 +505,25 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
     private func appendLog(_ message: String) {
         let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
         logTextView.text += "[\(timestamp)] \(message)\n"
-        
+
         // 스크롤 맨 아래로
         let bottom = NSRange(location: logTextView.text.count - 1, length: 1)
         logTextView.scrollRangeToVisible(bottom)
+    }
+
+    private func appendSLinkStatusLog() {
+        let status = SauceLink.shared.getSLinkStatus()
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yy.MM.dd HH:mm"
+        let savedAtStr = status.savedAt.map { fmt.string(from: $0) } ?? "-"
+        let expiresAtStr = status.expiresAt.map { fmt.string(from: $0) } ?? "-"
+        let retentionDays = String(format: "%.1f", status.retentionInterval / 86400)
+        let retentionSource = status.retentionInterval == 7 * 24 * 60 * 60 ? "기본값" : "서버"
+        appendLog("📌 [sLink 상태]")
+        appendLog("   TTL     : \(retentionDays)일 (\(retentionSource))")
+        appendLog("   유입시간 : \(savedAtStr)")
+        appendLog("   유효기간 : \(expiresAtStr)")
+        appendLog("   만료여부 : \(status.isExpired ? "Y" : "N")")
     }
     
     private func updateCartUI() {
