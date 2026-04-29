@@ -359,7 +359,19 @@ public final class SauceLink {
 
         // clickId 확인 또는 생성 (영구 저장)
         _ = storageManager.getOrCreateClickId()
-        
+
+        // 24시간 이내 토큰 캐시가 유효하면 API 호출 스킵
+        if storageManager.isTokenCacheValid(),
+           let cachedRetention = storageManager.getStoredRetentionInterval() {
+            Logger.info("✅ 토큰 캐시 유효 (24시간 이내) → 인증 API 스킵")
+            self.isTokenValid = true
+            self.isInitialized = true
+            self.lastAuthStatusCode = 200
+            self.sLinkRetentionInterval = cachedRetention
+            DispatchQueue.main.async { completion?(true) }
+            return
+        }
+
         // 토큰 인증 API 호출
         networkManager.validateToken(
             token: config.token,
@@ -378,6 +390,7 @@ public final class SauceLink {
                     self.isInitialized = true
                     self.lastAuthStatusCode = 200
                     self.sLinkRetentionInterval = retentionInterval
+                    self.storageManager.saveTokenValidation(retentionInterval: retentionInterval)
                     Logger.info("SDK initialized successfully")
                     
                     // 초기화 후 대기 중인 딥링크 처리
@@ -393,8 +406,14 @@ public final class SauceLink {
                 self.serialQueue.async {
                     self.isTokenValid = false
                     self.isInitialized = false
-                    // 에러 코드 추출 (401 등)
-                    self.lastAuthStatusCode = (error as NSError).code
+                    if case .httpError(let statusCode, let code, _) = error {
+                        self.lastAuthStatusCode = statusCode
+                        if statusCode == 403 && code == "SLS003" {
+                            Logger.error("🚫 소스링크 서비스 미사용 파트너 (SLS003) - 트래킹 비활성화")
+                        }
+                    } else {
+                        self.lastAuthStatusCode = (error as NSError).code
+                    }
                     Logger.error("Token validation failed: \(error.localizedDescription)")
                     DispatchQueue.main.async { completion?(false) }
                 }

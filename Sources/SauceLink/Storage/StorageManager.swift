@@ -12,7 +12,11 @@ final class StorageManager {
         static let sLinkEndDate = "com.saucelink.tracker.sLinkEndDate"
         static let sLinkSavedAt = "com.saucelink.tracker.sLinkSavedAt"
         static let firstAccess = "com.saucelink.tracker.firstAccess"
+        static let tokenValidatedAt = "com.saucelink.tracker.tokenValidatedAt"
+        static let retentionInterval = "com.saucelink.tracker.retentionInterval"
     }
+
+    private let tokenCacheDuration: TimeInterval = 24 * 60 * 60
 
     // MARK: - Private Properties
 
@@ -176,6 +180,29 @@ final class StorageManager {
         userDefaults.set(true, forKey: Keys.firstAccess)
     }
 
+    // MARK: - Token Cache
+
+    /// 토큰 인증 결과 저장 (검증 시각 + retentionInterval)
+    func saveTokenValidation(retentionInterval: TimeInterval) {
+        let now = Date().timeIntervalSince1970
+        userDefaults.set(now, forKey: Keys.tokenValidatedAt)
+        userDefaults.set(retentionInterval, forKey: Keys.retentionInterval)
+        Logger.info("토큰 캐시 저장: validatedAt=\(now), retentionInterval=\(Int(retentionInterval))s")
+    }
+
+    /// 24시간 이내 토큰 캐시가 유효한지 확인
+    func isTokenCacheValid() -> Bool {
+        let stored = userDefaults.double(forKey: Keys.tokenValidatedAt)
+        guard stored > 0 else { return false }
+        return Date().timeIntervalSince1970 - stored < tokenCacheDuration
+    }
+
+    /// 저장된 retentionInterval 조회
+    func getStoredRetentionInterval() -> TimeInterval? {
+        let stored = userDefaults.double(forKey: Keys.retentionInterval)
+        return stored > 0 ? stored : nil
+    }
+
     // MARK: - Debug
 
     func clearAll() {
@@ -189,6 +216,8 @@ final class StorageManager {
         userDefaults.removeObject(forKey: Keys.sLinkEndDate)
         userDefaults.removeObject(forKey: Keys.sLinkSavedAt)
         userDefaults.removeObject(forKey: Keys.firstAccess)
+        userDefaults.removeObject(forKey: Keys.tokenValidatedAt)
+        userDefaults.removeObject(forKey: Keys.retentionInterval)
 
         Logger.info("All storage cleared")
     }

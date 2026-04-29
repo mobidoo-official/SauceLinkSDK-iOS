@@ -24,13 +24,19 @@ enum NetworkError: Error, LocalizedError {
     }
 }
 
+/// 토큰 인증 요청 바디
+private struct TokenValidationRequest: Encodable {
+    let sauceLinkSdkToken: String
+    let partnerUniqueId: String
+}
+
 /// 토큰 인증 응답
 private struct TokenValidationResponse: Decodable {
     let code: String
     let data: TokenValidationData?
 
     struct TokenValidationData: Decodable {
-        let cookieExpiresAt: Int64?
+        let sauceLinkCookieRetentionHours: Int?
     }
 }
 
@@ -88,9 +94,20 @@ final class NetworkManager {
         
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 30
-        
+
+        // POST body
+        let requestBody = TokenValidationRequest(sauceLinkSdkToken: token, partnerUniqueId: partnerUniqueId)
+        do {
+            request.httpBody = try encoder.encode(requestBody)
+        } catch {
+            Logger.error("Failed to encode token validation request body")
+            completion(.failure(.decodingError))
+            return
+        }
+
         Logger.info("🌐 토큰 인증 요청")
         Logger.info("   URL: \(url.absoluteString)")
         Logger.info("   Partner ID: \(partnerUniqueId)")
@@ -122,15 +139,11 @@ final class NetworkManager {
                         Logger.info("   응답 내용: \(responseString)")
                     }
                     if let response = try? self?.decoder.decode(TokenValidationResponse.self, from: data) {
-                        if let cookieExpiresAt = response.data?.cookieExpiresAt {
-                            let expiresAtSeconds = TimeInterval(cookieExpiresAt) / 1000.0
-                            let retention = expiresAtSeconds - Date().timeIntervalSince1970
-                            if retention > 0 {
-                                retentionInterval = retention
-                                Logger.info("   cookieExpiresAt: \(cookieExpiresAt) → retentionInterval: \(Int(retention))s")
-                            }
+                        if let hours = response.data?.sauceLinkCookieRetentionHours, hours > 0 {
+                            retentionInterval = TimeInterval(hours) * 3600
+                            Logger.info("   sauceLinkCookieRetentionHours: \(hours) → retentionInterval: \(Int(retentionInterval))s")
                         } else {
-                            Logger.warning("   cookieExpiresAt 필드 없음 → 기본값 7일 적용")
+                            Logger.warning("   sauceLinkCookieRetentionHours 필드 없음 → 기본값 7일 적용")
                         }
                     }
                 }
@@ -138,12 +151,15 @@ final class NetworkManager {
                 completion(.success(retentionInterval))
                 
             case 401:
-                // 인증 실패
                 Logger.error("❌ 토큰 인증 실패 (401)")
                 self?.handleErrorResponse(data: data, statusCode: 401, completion: completion)
-                
+
+            case 403:
+                // 소스링크 서비스 미사용 파트너 (SLS003)
+                Logger.error("❌ 소스링크 서비스 미사용 파트너 (403)")
+                self?.handleErrorResponse(data: data, statusCode: 403, completion: completion)
+
             default:
-                // 기타 에러
                 Logger.error("❌ 토큰 인증 실패 (\(httpResponse.statusCode))")
                 self?.handleErrorResponse(data: data, statusCode: httpResponse.statusCode, completion: completion)
             }

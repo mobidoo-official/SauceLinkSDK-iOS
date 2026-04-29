@@ -254,9 +254,11 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
             
             if success {
                 self.appendLog("✅ SDK 초기화 성공 (토큰 인증: HTTP \(statusCode))")
+                self.appendAuthEndpointLog()
                 self.appendSLinkStatusLog()
             } else {
                 self.appendLog("❌ SDK 초기화 실패 (토큰 인증: HTTP \(statusCode))")
+                self.appendAuthEndpointLog()
             }
         }
     }
@@ -310,9 +312,11 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
             
             if success {
                 self.appendLog("✅ SDK 초기화 완료 (토큰 인증: \(statusCode))")
+                self.appendAuthEndpointLog()
                 self.appendSLinkStatusLog()
             } else {
                 self.appendLog("❌ SDK 초기화 실패 (토큰 인증: \(statusCode))")
+                self.appendAuthEndpointLog()
             }
         } else {
             // 아직 초기화 중
@@ -509,6 +513,12 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
         // 스크롤 맨 아래로
         let bottom = NSRange(location: logTextView.text.count - 1, length: 1)
         logTextView.scrollRangeToVisible(bottom)
+    }
+
+    private func appendAuthEndpointLog() {
+        let env = ConfigManager.shared.environment
+        let baseURL = env == .stage ? "https://stage.api-user.sauceflex.com" : "https://api-user.sauceflex.com"
+        appendLog("🌐 인증 API: POST \(baseURL)/sauce-link/v1/sdk/auth")
     }
 
     private func appendSLinkStatusLog() {
