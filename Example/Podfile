@@ -3,5 +3,7 @@ platform :ios, '14.0'
 target 'SauceLinkSDKExample' do
   use_frameworks!
 
-  pod 'SauceLinkSDK'
+  # 로컬 소스 참조 (개발/테스트용) — 배포 시 아래 줄로 교체
+  # pod 'SauceLinkSDK'
+  pod 'SauceLinkSDK', :path => '../'
 end

@@ -2,15 +2,15 @@ PODS:
   - SauceLinkSDK (1.0.0)
 
 DEPENDENCIES:
-  - SauceLinkSDK
+  - SauceLinkSDK (from `../`)
 
-SPEC REPOS:
-  trunk:
-    - SauceLinkSDK
+EXTERNAL SOURCES:
+  SauceLinkSDK:
+    :path: "../"
 
 SPEC CHECKSUMS:
-  SauceLinkSDK: 634fee976608c5cf2cf615f3a02ca0343b5789dc
+  SauceLinkSDK: 4197b282f82e2fbf846e3c809a47d2559954c480
 
-PODFILE CHECKSUM: 114109fab76a448457f41cfe6f49510e674d0c3c
+PODFILE CHECKSUM: 12de2fc6f3761f80f853dc5b955eb60aa4d82e5d
 
 COCOAPODS: 1.16.2
