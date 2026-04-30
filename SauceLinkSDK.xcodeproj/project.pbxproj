@@ -1,0 +1,348 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1A000001 /* SauceLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000001; };
+		1A000002 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000002; };
+		1A000003 /* ProductDetailInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000003; };
+		1A00000D /* OrderProductInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000D; };
+		1A000004 /* TrackerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000004; };
+		1A000005 /* TrackingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000005; };
+		1A000006 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000006; };
+		1A000007 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000007; };
+		1A000008 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000008; };
+		1A000009 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000009; };
+		1A00000A /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000A; };
+		1A00000B /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000B; };
+		1A00000C /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000C; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2A000001 /* SauceLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SauceLink.swift; sourceTree = "<group>"; };
+		2A000002 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
+		2A000003 /* ProductDetailInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailInfo.swift; sourceTree = "<group>"; };
+		2A00000D /* OrderProductInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderProductInfo.swift; sourceTree = "<group>"; };
+		2A000004 /* TrackerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerConfig.swift; sourceTree = "<group>"; };
+		2A000005 /* TrackingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingData.swift; sourceTree = "<group>"; };
+		2A000006 /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		2A000007 /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
+		2A000008 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		2A000009 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		2A00000A /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
+		2A00000B /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
+		2A00000C /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		3A000001 /* SauceLinkSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SauceLinkSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4A000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5A000001 = {
+			isa = PBXGroup;
+			children = (
+				5A000002 /* Sources */,
+				5A000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5A000002 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5A000004 /* SauceLink */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		5A000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3A000001 /* SauceLinkSDK.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5A000004 /* SauceLink */ = {
+			isa = PBXGroup;
+			children = (
+				2A000001 /* SauceLink.swift */,
+				5A000005 /* Models */,
+				5A000006 /* Network */,
+				5A000007 /* Storage */,
+				5A000008 /* DeepLink */,
+				5A000009 /* Utils */,
+			);
+			path = SauceLink;
+			sourceTree = "<group>";
+		};
+		5A000005 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2A000002 /* Environment.swift */,
+				2A000003 /* ProductDetailInfo.swift */,
+				2A00000D /* OrderProductInfo.swift */,
+				2A000004 /* TrackerConfig.swift */,
+				2A000005 /* TrackingData.swift */,
+				2A000006 /* UserData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5A000006 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				2A000007 /* APIEndpoints.swift */,
+				2A000008 /* NetworkManager.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		5A000007 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				2A000009 /* StorageManager.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		5A000008 /* DeepLink */ = {
+			isa = PBXGroup;
+			children = (
+				2A00000A /* DeepLinkHandler.swift */,
+			);
+			path = DeepLink;
+			sourceTree = "<group>";
+		};
+		5A000009 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				2A00000B /* DeviceInfo.swift */,
+				2A00000C /* Logger.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		6A000001 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		7A000001 /* SauceLinkSDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A000003 /* Build configuration list for PBXNativeTarget "SauceLinkSDK" */;
+			buildPhases = (
+				6A000001 /* Headers */,
+				9A000001 /* Sources */,
+				4A000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SauceLinkSDK;
+			productName = SauceLinkSDK;
+			productReference = 3A000001 /* SauceLinkSDK.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 8A000001 /* Build configuration list for PBXProject "SauceLinkSDK" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5A000001;
+			productRefGroup = 5A000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7A000001 /* SauceLinkSDK */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9A000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A000001 /* SauceLink.swift in Sources */,
+				1A000002 /* Environment.swift in Sources */,
+				1A000003 /* ProductDetailInfo.swift in Sources */,
+				1A00000D /* OrderProductInfo.swift in Sources */,
+				1A000004 /* TrackerConfig.swift in Sources */,
+				1A000005 /* TrackingData.swift in Sources */,
+				1A000006 /* UserData.swift in Sources */,
+				1A000007 /* APIEndpoints.swift in Sources */,
+				1A000008 /* NetworkManager.swift in Sources */,
+				1A000009 /* StorageManager.swift in Sources */,
+				1A00000A /* DeepLinkHandler.swift in Sources */,
+				1A00000B /* DeviceInfo.swift in Sources */,
+				1A00000C /* Logger.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BA000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BA000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CA000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.saucelink.sdk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CA000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.saucelink.sdk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8A000001 /* Build configuration list for PBXProject "SauceLinkSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BA000001 /* Debug */,
+				BA000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8A000003 /* Build configuration list for PBXNativeTarget "SauceLinkSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA000001 /* Debug */,
+				CA000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA000001 /* Project object */;
+}
