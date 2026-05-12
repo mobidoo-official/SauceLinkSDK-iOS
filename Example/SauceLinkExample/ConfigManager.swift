@@ -37,12 +37,12 @@ class ConfigManager {
     // MARK: - Properties
     
     var partnerUniqueId: String {
-        get { userDefaults.string(forKey: Keys.partnerUniqueId) ?? "" }
+        get { userDefaults.string(forKey: Keys.partnerUniqueId) ?? "saucelink125" }
         set { userDefaults.set(newValue, forKey: Keys.partnerUniqueId) }
     }
     
     var token: String {
-        get { userDefaults.string(forKey: Keys.token) ?? "" }
+        get { userDefaults.string(forKey: Keys.token) ?? "sla_H7q93aXotwsSIE53NyedPb7g3gSI" }
         set { userDefaults.set(newValue, forKey: Keys.token) }
     }
     

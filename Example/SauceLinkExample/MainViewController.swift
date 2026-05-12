@@ -527,10 +527,10 @@ class MainViewController: UIViewController, SettingsViewControllerDelegate {
         fmt.dateFormat = "yy.MM.dd HH:mm"
         let savedAtStr = status.savedAt.map { fmt.string(from: $0) } ?? "-"
         let expiresAtStr = status.expiresAt.map { fmt.string(from: $0) } ?? "-"
-        let retentionDays = String(format: "%.1f", status.retentionInterval / 86400)
+        let retentionHours = String(format: "%.1f", status.retentionInterval / 3600)
         let retentionSource = status.retentionInterval == 7 * 24 * 60 * 60 ? "기본값" : "서버"
         appendLog("📌 [sLink 상태]")
-        appendLog("   TTL     : \(retentionDays)일 (\(retentionSource))")
+        appendLog("   TTL     : \(retentionHours)시간 (\(retentionSource))")
         appendLog("   유입시간 : \(savedAtStr)")
         appendLog("   유효기간 : \(expiresAtStr)")
         appendLog("   만료여부 : \(status.isExpired ? "Y" : "N")")

@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'SauceLinkSDK'
   s.module_name      = 'SauceLinkSDK'
-  s.version          = '1.0.0'
+  s.version          = '1.1.0'
   s.summary          = 'SauceLink SDK for iOS'
   s.description      = <<-DESC
     SauceLink SDK는 iOS 앱에서 사용자 행동을 추적하고

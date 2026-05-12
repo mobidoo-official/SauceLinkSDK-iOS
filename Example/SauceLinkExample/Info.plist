@@ -33,7 +33,7 @@
 	<string>1</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>saucelinktest</string>
+		<string>saucelinkexample</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

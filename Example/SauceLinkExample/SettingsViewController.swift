@@ -319,6 +319,16 @@ class SettingsViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
             ConfigManager.shared.clearAll()
+
+            let defaults = UserDefaults.standard
+            ["com.saucelink.tracker.clickId",
+             "com.saucelink.tracker.sLink",
+             "com.saucelink.tracker.sLinkEndDate",
+             "com.saucelink.tracker.sLinkSavedAt",
+             "com.saucelink.tracker.firstAccess",
+             "com.saucelink.tracker.tokenValidatedAt",
+             "com.saucelink.tracker.retentionInterval"].forEach { defaults.removeObject(forKey: $0) }
+
             self?.partnerIdTextField.text = ""
             self?.tokenTextField.text = ""
             self?.productIdTextField.text = ""

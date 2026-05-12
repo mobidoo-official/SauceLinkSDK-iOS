@@ -9,7 +9,7 @@ FRAMEWORK_NAME="SauceLinkSDK"
 PROJECT="SauceLinkSDK.xcodeproj"
 BUILD_DIR="./build"
 OUTPUT_DIR="./output"
-VERSION="1.0.0"
+VERSION="1.1.0"
 
 # 색상
 GREEN='\033[0;32m'

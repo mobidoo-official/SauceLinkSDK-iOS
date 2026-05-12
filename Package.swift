@@ -19,8 +19,8 @@ let package = Package(
         // 배포용 바이너리 타겟
         .binaryTarget(
             name: "SauceLinkSDK",
-            url: "https://sdk.saucelink.im/iOS/SauceLinkSDK-1.0.0.zip",
-            checksum: "5f7c24f891b375f25021d9a4c51905851c85287237b61ac694c6b7381ee34bd1"
+            url: "https://sdk.saucelink.im/iOS/SauceLinkSDK-1.1.0.zip",
+            checksum: "964ae24078202a82ea3ef932d5ab9acc3484c334e2d0e7cf3b80676ca4a1e02c"
         ),
 
         // 로컬 개발용 소스 타겟 (주석 처리)
